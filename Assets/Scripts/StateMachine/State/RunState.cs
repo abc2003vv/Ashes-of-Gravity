@@ -15,12 +15,6 @@ public class RunState : State
     public override void LogicUpdate()
     {
         base.LogicUpdate();
-        
-        // Implement logic for running state, e.g., checking for input to stop running
-        // if (character.inputHandler.IsRunning() == false)
-        // {
-        //     stateMachine.ChangeState(character.idleState);
-        // }
     }
 
     public override void Exit()

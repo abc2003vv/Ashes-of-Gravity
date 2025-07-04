@@ -8,7 +8,9 @@ public class DataControl : ScriptableObject
     public string characterName;
     public float moveSpeed;
     public float maxHealth;
+    public float jumpForce;
     public float damage;
+
 
     [Header("Visual")]
     public List<GameManager> characterPrefab;

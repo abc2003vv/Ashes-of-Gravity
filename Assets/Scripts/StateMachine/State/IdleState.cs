@@ -16,7 +16,7 @@ namespace StateMachine.idleState
         public override void Enter()
         {
             base.Enter();
-
+            character.animator.SetBool("isIdle", true); 
         }
 
         public override void LogicUpdate()
