@@ -19,11 +19,9 @@ namespace StateMachine.CharacterController
         public DataControl dataControl;
         public Animator animator { get; private set; }
         public CharacterStateMachine stateMachine { get; private set; }
-
+        public Rigidbody _rb;
         private Vector3 _moveDirection;
-        private Rigidbody _rb;
         private bool _isGrounded;
-
         void Start()
         {
             animator = GetComponent<Animator>();
@@ -42,13 +40,27 @@ namespace StateMachine.CharacterController
             
             EnableJoystickInput(isJoystickInput);
         }
-
+         public bool CheckRayCast(float distance)
+            {
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position + Vector3.up * 0.1f, Vector3.down, out hit, distance))
+                {
+                    return hit.collider.CompareTag("Ground");
+                }
+                return false;
+            }
         private void EnableJoystickInput(bool enabled)
         {
             isJoystickInput = enabled;
             inputCanvas?.gameObject.SetActive(enabled);
         }
-
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (collision.gameObject.CompareTag("Ground"))
+            {
+                _isGrounded = true;
+            }
+        }
         void Update()
         {
             HandleInput(); 
@@ -57,16 +69,13 @@ namespace StateMachine.CharacterController
         public void onClickJumpButton()
         {
             if (_isGrounded)
-            {
+            {   
                 _rb.AddForce(Vector3.up * dataControl.jumpForce, ForceMode.Impulse);
+                _isGrounded = false;
                 stateMachine.ChangeState(stateMachine.GetState<jumpState>());
             }
-            else if (!_isGrounded)
-            {
-                stateMachine.ChangeState(stateMachine.GetState<jumpLandState>());
-            }
         }
-        
+
         private void HandleInput()
         {
             if (!isJoystickInput || cameraTransform == null) return;
@@ -82,17 +91,31 @@ namespace StateMachine.CharacterController
 
             _moveDirection = (camForward * input.y + camRight * input.x).normalized;
 
+            // --- Quay nhân vật luôn, kể cả khi đang nhảy ---
             if (_moveDirection != Vector3.zero)
             {
                 Quaternion lookRot = Quaternion.LookRotation(_moveDirection);
                 transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * 10f);
-                stateMachine.ChangeState(stateMachine.GetState<RunState>());
             }
-            else
+
+            // --- Chuyển state chỉ khi không ở Jump hoặc JumpLand ---
+            if (!(stateMachine.CurrentState is jumpState) && !(stateMachine.CurrentState is jumpLandState))
+            {
+                if (_moveDirection != Vector3.zero)
+                {
+                    if (!(stateMachine.CurrentState is RunState))
+                        stateMachine.ChangeState(stateMachine.GetState<RunState>());
+                }
+                else
+                {
+                    if (!(stateMachine.CurrentState is IdleState))
+                        stateMachine.ChangeState(stateMachine.GetState<IdleState>());
+                }
+            }
+            if (stateMachine.CurrentState is jumpLandState)
             {
                 stateMachine.ChangeState(stateMachine.GetState<IdleState>());
             }
-
         }
 
         void FixedUpdate()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using StateMachine.CharacterController;
@@ -6,6 +7,7 @@ using UnityEngine.UI;
 public class Inputcontrol : MonoBehaviour
 {
     public Button JumpButton;
+    public Character character;
     void Start()
     {
         if (JumpButton != null)
@@ -15,11 +17,10 @@ public class Inputcontrol : MonoBehaviour
     }
     public void OnJumpButtonClicked()
     {
-        // Assuming you have a reference to the character script
-        Character character = FindObjectOfType<Character>();
         if (character != null)
         {
-           character.onClickJumpButton();
+             character.onClickJumpButton();
         }
+        // Assuming you have a reference to the character script
     }
 }

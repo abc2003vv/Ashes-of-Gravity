@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Knight
   m_EditorClassIdentifier: 
   characterName: Knight
-  moveSpeed: 5
+  moveSpeed: 20
   maxHealth: 100
-  jumpForce: 5
+  jumpForce: 7
   damage: 10
   characterPrefab: []
   animatorController: {fileID: 9100000, guid: 20df4a2cb369b104792a5e5f66de9a55, type: 2}

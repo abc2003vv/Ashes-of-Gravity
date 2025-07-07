@@ -10,29 +10,26 @@ namespace StateMachine.JumpLandState
     public class jumpLandState : State
     {
         public jumpLandState(Character character, CharacterStateMachine stateMachine) : base(character, stateMachine) { }
-
         public override void Enter()
         {
             base.Enter();
-            character.animator.SetBool("isJumland", true);
+            character.animator.SetBool("isJumpLand", true);
         }
 
         public override void LogicUpdate()
         {
             base.LogicUpdate();
-
         }
 
         public override void PhysicsUpdate()
         {
             base.PhysicsUpdate();
-
         }
 
         public override void Exit()
         {
             base.Exit();
-            character.animator.SetBool("isJumland", false);
+            character.animator.SetBool("isJumpLand", false);
         }
     }
 }
