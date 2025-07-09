@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Inputcontrol : MonoBehaviour
 {
+    public Button AttackButton;
     public Button JumpButton;
     public Character character;
     void Start()
@@ -14,7 +15,21 @@ public class Inputcontrol : MonoBehaviour
         {
             JumpButton.onClick.AddListener(OnJumpButtonClicked);
         }
+        if (AttackButton != null)
+        {
+            AttackButton.onClick.AddListener(OnAttackButtonClicked);
+        }
     }
+
+    private void OnAttackButtonClicked()
+    {
+       if (character != null)
+        {
+            character.onClickAttackButton();
+        }
+        // Assuming you have a reference to the character script
+    }
+
     public void OnJumpButtonClicked()
     {
         if (character != null)

@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using StateMachine.Attackstate;
 using StateMachine.CharacterMachine;
 using StateMachine.idleState;
 using StateMachine.JumpLandState;
@@ -36,6 +37,7 @@ namespace StateMachine.CharacterController
             stateMachine.AddState(new RunState(this, stateMachine));
             stateMachine.AddState(new jumpState(this, stateMachine));
             stateMachine.AddState(new jumpLandState(this, stateMachine));
+            stateMachine.AddState(new AttackState(this, stateMachine));
             stateMachine.Initialize(stateMachine.GetState<IdleState>());
             
             EnableJoystickInput(isJoystickInput);
@@ -66,10 +68,24 @@ namespace StateMachine.CharacterController
             HandleInput(); 
             stateMachine.CurrentState?.LogicUpdate(); 
         }
+        public void onClickAttackButton()
+        {
+            stateMachine.ChangeState(stateMachine.GetState<AttackState>());
+            // if (stateMachine.CurrentState is AttackState) return;
+            // if (stateMachine.CurrentState is IdleState || stateMachine.CurrentState is RunState)
+            // {
+            //     stateMachine.ChangeState(stateMachine.GetState<AttackState>());
+            // }
+            // else
+            // {
+            //     stateMachine.ChangeState(stateMachine.GetState<IdleState>());
+            // }
+           
+        }
         public void onClickJumpButton()
         {
             if (_isGrounded)
-            {   
+            {
                 _rb.AddForce(Vector3.up * dataControl.jumpForce, ForceMode.Impulse);
                 _isGrounded = false;
                 stateMachine.ChangeState(stateMachine.GetState<jumpState>());
@@ -99,7 +115,8 @@ namespace StateMachine.CharacterController
             }
 
             // --- Chuyển state chỉ khi không ở Jump hoặc JumpLand ---
-            if (!(stateMachine.CurrentState is jumpState) && !(stateMachine.CurrentState is jumpLandState))
+            if (!(stateMachine.CurrentState is jumpState) && !(stateMachine.CurrentState is jumpLandState) &&
+             !(stateMachine.CurrentState is AttackState))
             {
                 if (_moveDirection != Vector3.zero)
                 {
@@ -116,6 +133,9 @@ namespace StateMachine.CharacterController
             {
                 stateMachine.ChangeState(stateMachine.GetState<IdleState>());
             }
+            ///
+            /// 
+            
         }
 
         void FixedUpdate()

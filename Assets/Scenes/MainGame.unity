@@ -1346,6 +1346,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 177f5e0f882595846a8bfdab09e53360, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AttackButton: {fileID: 814806035}
   JumpButton: {fileID: 1047440024}
   character: {fileID: 1443926419}
 --- !u!1 &415486282
@@ -3051,14 +3052,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1589245842}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17375591, y: -0.7066112, z: 0.17407966, w: 0.66348004}
-  m_LocalPosition: {x: 32.13, y: 7.57, z: 70.34}
+  m_LocalRotation: {x: 0.21220583, y: -0.6960309, z: 0.21016622, w: 0.652947}
+  m_LocalPosition: {x: 34.3, y: 10.24, z: 71.93}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1627905151}
+  m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 28.462, y: -93.847, z: -0.949}
+  m_LocalEulerAnglesHint: {x: 34.728, y: -94.115, z: -1.461}
 --- !u!114 &1589245846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3267,7 +3267,7 @@ RectTransform:
   - {fileID: 1047440023}
   - {fileID: 814806034}
   - {fileID: 348344035}
-  m_Father: {fileID: 1589245845}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4001,3 +4001,4 @@ SceneRoots:
   - {fileID: 1589245845}
   - {fileID: 415486285}
   - {fileID: 520663411}
+  - {fileID: 1627905151}
