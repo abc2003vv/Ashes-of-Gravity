@@ -6,8 +6,9 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Inputcontrol : MonoBehaviour
 {
-    public Button AttackButton;
+    public Button AttackSliceButton;
     public Button JumpButton;
+    public Button AttackChopButton;
     public Character character;
     void Start()
     {
@@ -15,17 +16,29 @@ public class Inputcontrol : MonoBehaviour
         {
             JumpButton.onClick.AddListener(OnJumpButtonClicked);
         }
-        if (AttackButton != null)
+        if (AttackSliceButton != null)
         {
-            AttackButton.onClick.AddListener(OnAttackButtonClicked);
+            AttackSliceButton.onClick.AddListener(OnAttackSliceButtonClicked);
+        }
+        if (AttackChopButton != null)
+        {
+            AttackChopButton.onClick.AddListener(OnAttackChopButtonClicked);
         }
     }
+    private void OnAttackChopButtonClicked()
+        {
+        if (character != null)
+            {
+                character.onClickAttackChopButton();
+            }
+            // Assuming you have a reference to the character script
+        }
 
-    private void OnAttackButtonClicked()
+    private void OnAttackSliceButtonClicked()
     {
        if (character != null)
         {
-            character.onClickAttackButton();
+            character.onClickAttackSliceButton();
         }
         // Assuming you have a reference to the character script
     }

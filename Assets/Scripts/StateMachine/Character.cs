@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using StateMachine.Attackstate;
+using StateMachine.AttackSliceState;
 using StateMachine.CharacterMachine;
 using StateMachine.idleState;
 using StateMachine.JumpLandState;
@@ -23,23 +23,23 @@ namespace StateMachine.CharacterController
         public Rigidbody _rb;
         private Vector3 _moveDirection;
         private bool _isGrounded;
+        private float _currentMoveSpeed = 0f;
         void Start()
         {
+            _currentMoveSpeed = dataControl.moveSpeed;
             animator = GetComponent<Animator>();
             _rb = GetComponent<Rigidbody>();
 
             if (dataControl != null && dataControl.animatorController != null)
-                animator.runtimeAnimatorController = dataControl.animatorController;
-
-           stateMachine = new CharacterStateMachine();
-
+            animator.runtimeAnimatorController = dataControl.animatorController;
+            stateMachine = new CharacterStateMachine();
             stateMachine.AddState(new IdleState(this, stateMachine));
             stateMachine.AddState(new RunState(this, stateMachine));
             stateMachine.AddState(new jumpState(this, stateMachine));
             stateMachine.AddState(new jumpLandState(this, stateMachine));
-            stateMachine.AddState(new AttackState(this, stateMachine));
+            stateMachine.AddState(new Attack_SliceState(this, stateMachine));
+            stateMachine.AddState(new Attack_ChopState(this, stateMachine));
             stateMachine.Initialize(stateMachine.GetState<IdleState>());
-            
             EnableJoystickInput(isJoystickInput);
         }
          public bool CheckRayCast(float distance)
@@ -65,22 +65,37 @@ namespace StateMachine.CharacterController
         }
         void Update()
         {
-            HandleInput(); 
+            HandleInput();
             stateMachine.CurrentState?.LogicUpdate(); 
         }
-        public void onClickAttackButton()
+        public void onClickAttackSliceButton()
         {
-            stateMachine.ChangeState(stateMachine.GetState<AttackState>());
-            // if (stateMachine.CurrentState is AttackState) return;
-            // if (stateMachine.CurrentState is IdleState || stateMachine.CurrentState is RunState)
-            // {
-            //     stateMachine.ChangeState(stateMachine.GetState<AttackState>());
-            // }
-            // else
-            // {
-            //     stateMachine.ChangeState(stateMachine.GetState<IdleState>());
-            // }
+            if (stateMachine.CurrentState is IdleState || stateMachine.CurrentState is RunState)
+            {
+                dataControl.moveSpeed = 0f;
+                stateMachine.ChangeState(stateMachine.GetState<Attack_SliceState>());
+                Debug.Log("Attack Slice State Activated");
+            }
+            else if (stateMachine.CurrentState is IdleState || stateMachine.CurrentState is RunState)
+            {
+                dataControl.moveSpeed = _currentMoveSpeed;
+                Debug.Log("Already in Attack Slice State");
+            }
+            
            
+        }
+        public void onClickAttackChopButton()
+        {
+            if (stateMachine.CurrentState is IdleState || stateMachine.CurrentState is RunState)
+            {
+                stateMachine.ChangeState(stateMachine.GetState<Attack_ChopState>());
+                Debug.Log("Attack Slice State Activated");
+            }
+            else if (stateMachine.CurrentState is IdleState || stateMachine.CurrentState is RunState)
+            {
+                dataControl.moveSpeed = _currentMoveSpeed;
+                Debug.Log("Already in Attack Chop State");
+            }
         }
         public void onClickJumpButton()
         {
@@ -89,6 +104,10 @@ namespace StateMachine.CharacterController
                 _rb.AddForce(Vector3.up * dataControl.jumpForce, ForceMode.Impulse);
                 _isGrounded = false;
                 stateMachine.ChangeState(stateMachine.GetState<jumpState>());
+                if (stateMachine.CurrentState is jumpState)
+                {
+                    dataControl.moveSpeed = 0f;
+                }
             }
         }
 
@@ -114,10 +133,6 @@ namespace StateMachine.CharacterController
                 transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * 10f);
             }
 
-            // --- Chuyển state chỉ khi không ở Jump hoặc JumpLand ---
-            if (!(stateMachine.CurrentState is jumpState) && !(stateMachine.CurrentState is jumpLandState) &&
-             !(stateMachine.CurrentState is AttackState))
-            {
                 if (_moveDirection != Vector3.zero)
                 {
                     if (!(stateMachine.CurrentState is RunState))
@@ -128,7 +143,7 @@ namespace StateMachine.CharacterController
                     if (!(stateMachine.CurrentState is IdleState))
                         stateMachine.ChangeState(stateMachine.GetState<IdleState>());
                 }
-            }
+            
             if (stateMachine.CurrentState is jumpLandState)
             {
                 stateMachine.ChangeState(stateMachine.GetState<IdleState>());
