@@ -13,7 +13,7 @@ public abstract class State
             this.character = character;
             this.stateMachine = stateMachine;
         }
-
+    
         public virtual void Enter() { }
         public virtual void LogicUpdate() { }
         public virtual void PhysicsUpdate() { }

@@ -4,15 +4,22 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+   public static GameManager Instance { get; private set; }
+   [SerializeField]private DataBoss _dataBoss;
+   float currentSpeed = 0f;
+    private void Awake()
     {
-        
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+     public bool IsPaused { get; private set; }
+    public void PauseGame() => IsPaused = true;
+    public void ResumeGame() => IsPaused = false;
 }

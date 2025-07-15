@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Knight
   m_EditorClassIdentifier: 
   characterName: Knight
-  moveSpeed: 0
+  moveSpeed: 7
   maxHealth: 100
   jumpForce: 7
   damage: 10
