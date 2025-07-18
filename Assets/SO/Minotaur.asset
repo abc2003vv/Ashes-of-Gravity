@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Runspeed: 5
   walkingSpeed: 2
+  walkingDistance: 3
   attackRange: 10
   attackDamage: 10
   checkPlayerRadius: 5
+  checkNearPlayerRadius: 2
   animatorController: {fileID: 9100000, guid: 1ec31ee6b4e699b4c919f9ddd24f6f73, type: 2}
   attackSound: {fileID: 0}
   jumpSound: {fileID: 0}

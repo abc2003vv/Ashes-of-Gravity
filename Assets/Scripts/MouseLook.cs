@@ -1,99 +1,94 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems; // Cần thiết để kiểm tra touch/chuột có đang tương tác UI
 
-public class MouseLook : MonoBehaviour
+public class MouseOrTouchLook : MonoBehaviour
 {
-    [Header("Cài đặt Camera")]
-    public Transform target;                        // Nhân vật (player)
-    public Vector3 offset = new Vector3(0f, 5f, -8f); // Vị trí camera so với player
-    public float smoothTime = 0.1f;                 // Độ mượt khi camera di chuyển
+    public Transform target;                    // Player
+    public Vector3 offset = new Vector3(0, 3, -6);
+    public float mouseSensitivity = 2f;
+    public float smoothTime = 0.1f;
+    public float returnSpeed = 2f;
 
-    [Header("Xoay chuột")]
-    public float mouseSensitivity = 3f;             // Nhạy chuột
-    public float minPitch = -35f;                   // Giới hạn nhìn xuống
-    public float maxPitch = 75f;                    // Giới hạn nhìn lên
+    private float yaw = 0f;
+    private float pitch = 15f;
+    private Vector3 currentVelocity;
+    private bool isDragging = false;
 
-    [Header("Auto Reset sau khi thả chuột")]
-    public bool autoReturn = true;                  // Bật tính năng tự xoay về sau lưng
-    public float returnToBehindSpeed = 3f;          // Tốc độ quay lại
-
-    private float yaw;                              // Góc xoay ngang
-    private float pitch = 10f;                      // Góc xoay dọc mặc định
-    private bool isRotating = false;                // Đang xoay chuột phải
-    private Vector3 currentVelocity;                // Tốc độ dùng cho SmoothDamp
+    private float targetYaw => target.eulerAngles.y;
 
     void Start()
     {
-        if (target == null)
-        {
-            Debug.LogWarning("⚠️ MouseLook: Chưa gán Target.");
-            enabled = false;
-            return;
-        }
+        yaw = target.eulerAngles.y;
+    }
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
-        yaw = target.eulerAngles.y; // Khởi đầu camera ở sau lưng nhân vật
+    void Update()
+    {
+        HandleInput();
     }
 
     void LateUpdate()
     {
-        if (target == null) return;
-
-        HandleMouseInput();
-        UpdateCameraPosition();
-    }
-
-    void HandleMouseInput()
-    {
-        // Nhấn chuột phải để xoay camera
-        if (Input.GetMouseButtonDown(1))
-        {
-            isRotating = true;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-
-        // Thả chuột phải
-        if (Input.GetMouseButtonUp(1))
-        {
-            isRotating = false;
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
-
-        // Nếu đang giữ chuột phải → xoay tự do
-        if (isRotating)
-        {
-            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
-
-            yaw += mouseX;
-            pitch -= mouseY;
-            pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
-        }
-        else if (autoReturn)
-        {
-            // Tự động quay lại sau lưng nhân vật (mượt)
-            float targetYaw = target.eulerAngles.y;
-            yaw = Mathf.LerpAngle(yaw, targetYaw, Time.deltaTime * returnToBehindSpeed);
-        }
-    }
-
-    void UpdateCameraPosition()
-    {
-        // Tính góc xoay thành Quaternion
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
-
-        // Tính vị trí cần đến
         Vector3 desiredPosition = target.position + rotation * offset;
 
-        // Mượt hóa di chuyển camera
-        Vector3 smoothedPosition = Vector3.SmoothDamp(transform.position, desiredPosition, ref currentVelocity, smoothTime);
+        transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref currentVelocity, smoothTime);
 
-        transform.position = smoothedPosition;
+        // Luôn nhìn vào nhân vật
+        Vector3 lookTarget = target.position + Vector3.up * 1.5f;
+        transform.rotation = Quaternion.LookRotation(lookTarget - transform.position);
+    }
 
-        // Nhìn vào vị trí gần đầu nhân vật
-        transform.LookAt(target.position + Vector3.up * 1.5f);
+    void HandleInput()
+    {
+#if UNITY_EDITOR || UNITY_STANDALONE
+        // Nếu đang nhấn vào UI (như joystick) thì bỏ qua
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            return;
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            isDragging = true;
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            isDragging = false;
+        }
+
+        if (isDragging)
+        {
+            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+            yaw += mouseX;
+        }
+        else
+        {
+            yaw = Mathf.LerpAngle(yaw, targetYaw, Time.deltaTime * returnSpeed);
+        }
+
+#elif UNITY_ANDROID || UNITY_IOS
+        // Nếu đang nhấn vào UI thì bỏ qua
+        if (Input.touchCount > 0 && EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+            return;
+
+        if (Input.touchCount == 1)
+        {
+            Touch touch = Input.GetTouch(0);
+
+            if (touch.phase == TouchPhase.Began)
+                isDragging = true;
+            else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+                isDragging = false;
+
+            if (isDragging && touch.phase == TouchPhase.Moved)
+            {
+                float deltaX = touch.deltaPosition.x * mouseSensitivity * 0.1f;
+                yaw += deltaX;
+            }
+        }
+        else
+        {
+            isDragging = false;
+            yaw = Mathf.LerpAngle(yaw, targetYaw, Time.deltaTime * returnSpeed);
+        }
+#endif
     }
 }

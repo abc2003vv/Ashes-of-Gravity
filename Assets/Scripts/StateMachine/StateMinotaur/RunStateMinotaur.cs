@@ -15,7 +15,6 @@ public class RunStateMinotaur : MinotaurState
 
     public override void LogicUpdate()
     {
-        // Logic for running state can be added here
     }
 
     public override void Exit()

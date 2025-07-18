@@ -30,6 +30,10 @@ namespace StateMachine.StateMinotaur
                 _states.Add(type, state);
             }
         }
+           public void Update()
+            {
+                CurrentState?.LogicUpdate();
+            }
 
         public T GetState<T>() where T : MinotaurState
         {

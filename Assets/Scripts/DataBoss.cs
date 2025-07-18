@@ -6,9 +6,11 @@ public class DataBoss : ScriptableObject
 {
     public float Runspeed;
     public float walkingSpeed;
+    public float walkingDistance;
     public float attackRange;
     public float attackDamage;
-     public float checkPlayerRadius;
+    public float checkPlayerRadius;
+    public float checkNearPlayerRadius;
     public RuntimeAnimatorController animatorController;
     public AudioClip attackSound;
     public AudioClip jumpSound;
