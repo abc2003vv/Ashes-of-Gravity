@@ -1,18 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public class StateCrab : MonoBehaviour
+using StateMachine.ControlCrabs;
+
+namespace StateMachine.StateCrabControl
 {
-    // Start is called before the first frame update
-    void Start()
+    public abstract class StateCrab
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        protected CrabControl crabControl;
+        protected CrabStateMachine stateMachine;
+        protected StateCrab(CrabControl crabControl, CrabStateMachine stateMachine)
+        {
+            this.crabControl = crabControl;
+            this.stateMachine = stateMachine;
+        }
+        public virtual void Enter() { }
+        public virtual void LogicUpdate() { }
+        public virtual void PhysicsUpdate() { }
+        public virtual void Exit() { }   
     }
 }
