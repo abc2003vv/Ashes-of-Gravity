@@ -1,28 +1,26 @@
 using StateMachine.ControlCrabs;
 using StateMachine.StateCrabControl;
-namespace StateMachine.idleCarbState
+namespace StateMachine.walkingCrab
 {
-    /// <summary>
-    public class IdleCrabState : StateCrab
+    public class WalkingCrabState : StateCrab
     {
-        public IdleCrabState(CrabControl crab, CrabStateMachine stateMachine) : base(crab, stateMachine) { }
+        public WalkingCrabState(CrabControl crab, CrabStateMachine stateMachine) : base(crab, stateMachine) { }
 
-        /// <summary>
         public override void Enter()
         {
             base.Enter();
-            crabControl.animator.SetBool("isIdle", true);
+            crabControl.animator.SetBool("isWalking", true);
         }
 
         public override void LogicUpdate()
         {
             base.LogicUpdate();
-
         }
 
         public override void Exit()
         {
             base.Exit();
+            crabControl.animator.SetBool("isWalking", false);
         }
     }
 }

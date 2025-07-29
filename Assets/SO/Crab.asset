@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Crab
   m_EditorClassIdentifier: 
   maxHealth: 100
-  DameAttack: 0
-  moveSpeed: 0
-  checkNearPlayerRadius: 2
+  DameAttack: 10
+  moveSpeed: 3.5
+  checkNearPlayerRadius: 3
   animatorController: {fileID: 9100000, guid: e79140921d0f5464991251d9effe961c, type: 2}

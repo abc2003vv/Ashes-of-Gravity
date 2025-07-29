@@ -1,4 +1,5 @@
 using StateMachine.idleCarbState;
+using StateMachine.walkingCrab;
 using UnityEngine;
 namespace StateMachine.ControlCrabs
 {
@@ -7,8 +8,7 @@ namespace StateMachine.ControlCrabs
         public DataEnemyCrab datacontrol;
         public Animator animator { get; private set; }
         public CrabStateMachine state { get; private set; }
-        public Rigidbody _rb;
-        private Vector3 _moveDirection;
+        private Rigidbody _rb;
         private bool _isGrounded;
         private float _currentMoveSpeed = 0f;
         [SerializeField] private LayerMask targetMask;
@@ -20,12 +20,30 @@ namespace StateMachine.ControlCrabs
             {
                 animator.runtimeAnimatorController = datacontrol.animatorController;
                 state = new CrabStateMachine();
+                state.AddState(new IdleCrabState(this, state));
+                state.AddState(new WalkingCrabState(this, state));
                 state.Initialize(state.GetState<IdleCrabState>());
+            }
+        }
+        void statemove()
+        {
+            if (_isGrounded)
+            {
+                Vector3 moveDirection = new Vector3(transform.forward.x, 0, transform.forward.z).normalized);
+                _currentMoveSpeed = datacontrol.moveSpeed * Time.deltaTime;
+                _rb.MovePosition(transform.position + moveDirection * _currentMoveSpeed);
             }
         }
         void Update()
         {
-            checkNearPlayerRadius();
+            if (state != null)
+            {
+                state.LogicUpdate();
+                if (checkNearPlayerRadius())
+                {
+                    state.ChangeState(state.GetState<WalkingCrabState>());
+                }
+            }
         }
         private bool checkNearPlayerRadius()
         {
