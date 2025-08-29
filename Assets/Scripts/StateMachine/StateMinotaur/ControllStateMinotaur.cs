@@ -1,3 +1,4 @@
+using ScriptableObjects.BossMinotaur;
 using StateMachine.Attack1;
 using StateMachine.Attack2;
 using StateMachine.Attack3;
@@ -12,7 +13,7 @@ namespace StateMachine.StateMinotaur
     {
         [Header("Data")]
         [SerializeField] LayerMask targetMask;
-        public DataBoss dataControl;
+        public BossSO dataControl;
         public Transform player;
         public bool isRunning;
         public bool isAttacking = false;
@@ -28,8 +29,8 @@ namespace StateMachine.StateMinotaur
         {
             animator = GetComponent<Animator>();
             _rb = GetComponent<Rigidbody>();
-            if (dataControl != null && dataControl.animatorController != null)
-            animator.runtimeAnimatorController = dataControl.animatorController;
+            if (dataControl != null && dataControl.dataBoss.animatorController != null)
+            animator.runtimeAnimatorController = dataControl.dataBoss.animatorController;
             stateMachine = new MinotaurStateMachine();
             stateMachine.AddState(new IdleStateMinotaur(this, stateMachine));
             stateMachine.AddState(new MinotaurWalkState(this, stateMachine));
@@ -105,18 +106,18 @@ namespace StateMachine.StateMinotaur
             return;
         }
 
-        if (isRunning)
-        {
-            _currentSpeed = dataControl.Runspeed;
-            stateMachine.ChangeState(stateMachine.GetState<RunStateMinotaur>());
-            Debug.Log("chage to RunStateMinotaur");
-        }
-        else
-        {
-            _currentSpeed = dataControl.walkingSpeed;
-            stateMachine.ChangeState(stateMachine.GetState<MinotaurWalkState>());
-            Debug.Log("chage to WalkStateMinotaur");
-        }
+        // if (isRunning)
+        // {
+        //     _currentSpeed = dataControl.dataBoss.runningSpeed;
+        //     stateMachine.ChangeState(stateMachine.GetState<RunStateMinotaur>());
+        //     Debug.Log("chage to RunStateMinotaur");
+        // }
+        // else
+        // {
+        //     _currentSpeed = dataControl.dataBoss.walkingSpeed;
+        //     stateMachine.ChangeState(stateMachine.GetState<MinotaurWalkState>());
+        //     Debug.Log("chage to WalkStateMinotaur");
+        // }
 
         MoveTowardsTarget(); // chỉ được gọi nếu không phải Idle
     }
@@ -131,7 +132,7 @@ namespace StateMachine.StateMinotaur
         /// Updates the Minotaur's state every frame.
         private bool checkNearPlayerRadius()
         {
-            Collider[] hits = Physics.OverlapSphere(transform.position, dataControl.checkNearPlayerRadius, targetMask);
+            Collider[] hits = Physics.OverlapSphere(transform.position, dataControl.dataBoss.checkNearPlayerRadius, targetMask);
             foreach (Collider hit in hits)
             {
                 if (hit.CompareTag("Player"))
@@ -144,38 +145,39 @@ namespace StateMachine.StateMinotaur
         }
         void Update()
         {
-            Transform detectedPlayer = DetectTarget(dataControl.checkPlayerRadius, targetMask);
+            // Transform detectedPlayer = DetectTarget(dataControl.checkPlayerRadius, targetMask);
 
-            if (detectedPlayer != null)
-            {
-                player = detectedPlayer;
-                if (IsPlayerNear())
-                {
-                    isRunning = false;
-                    Debug.Log("Đi bộ");
-                }
-                else
-                {
-                    isRunning = true;
-                    Debug.Log(" Chạy");
-                }
+            // if (detectedPlayer != null)
+            // {
+            //     player = detectedPlayer;
+            //     if (IsPlayerNear())
+            //     {
+            //         isRunning = false;
+            //         Debug.Log("Đi bộ");
+            //     }
+            //     else
+            //     {
+            //         isRunning = true;
+            //         Debug.Log(" Chạy");
+            //     }
 
-                ControlSpeed();
-            }
-            else
-            {
-                player = null;
-                isRunning = false;
-                stateMachine.ChangeState(stateMachine.GetState<IdleStateMinotaur>());
-            }
-            HandlesAttackMinotaur();
-            stateMachine.Update();
-            }
+            //     ControlSpeed();
+            // }
+            // else
+            // {
+            //     player = null;
+            //     isRunning = false;
+            //     stateMachine.ChangeState(stateMachine.GetState<IdleStateMinotaur>());
+            // }
+            // HandlesAttackMinotaur();
+            // stateMachine.Update();
+            // }
 
-        /// <summary>       
-        /// Moves the Minotaur towards the target player if it exists and the current speed is greater than zero.
-        /// </summary>  
-        void MoveTowardsTarget()
+            /// <summary>       
+            /// Moves the Minotaur towards the target player if it exists and the current speed is greater than zero.
+            /// </summary>  
+        }
+            void MoveTowardsTarget()
         {
             if (player == null || _currentSpeed <= 0f) return;
             Vector3 dir = player.position - transform.position;
@@ -187,7 +189,7 @@ namespace StateMachine.StateMinotaur
         }
         private bool IsPlayerNear()
         {
-            Collider[] hits = Physics.OverlapSphere(transform.position, dataControl.walkingDistance, targetMask);
+            Collider[] hits = Physics.OverlapSphere(transform.position, dataControl.dataBoss.walkingDistance, targetMask);
             foreach (Collider hit in hits)
             {
                 if (hit.CompareTag("Player"))

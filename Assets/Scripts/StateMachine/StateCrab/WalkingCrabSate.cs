@@ -9,18 +9,19 @@ namespace StateMachine.walkingCrab
         public override void Enter()
         {
             base.Enter();
-            crabControl.animator.SetBool("isWalking", true);
+            crabControl.animator.SetBool("iswalking", true);
         }
 
         public override void LogicUpdate()
         {
             base.LogicUpdate();
+            crabControl.statemove();
         }
 
         public override void Exit()
         {
             base.Exit();
-            crabControl.animator.SetBool("isWalking", false);
+            crabControl.animator.SetBool("iswalking", false);
         }
     }
 }

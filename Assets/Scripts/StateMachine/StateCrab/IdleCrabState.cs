@@ -23,6 +23,7 @@ namespace StateMachine.idleCarbState
         public override void Exit()
         {
             base.Exit();
+            crabControl.animator.SetBool("isIdle", false);
         }
     }
 }

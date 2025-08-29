@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using StateMachine.StateCrabControl;
 using UnityEngine;
 
-public class CrabStateMachine : MonoBehaviour
+public class CrabStateMachine 
 { 
         private Dictionary<System.Type, StateCrab> _states = new Dictionary<System.Type, StateCrab>();
         public StateCrab CurrentState { get; private set; }
@@ -32,12 +32,5 @@ public class CrabStateMachine : MonoBehaviour
         {
             return _states[typeof(T)] as T;
         }
-
-
-         public virtual void Enter() { }
-        public virtual void LogicUpdate() { }
-        public virtual void PhysicsUpdate() { }
-        public virtual void Exit() { }
-        
     }
 

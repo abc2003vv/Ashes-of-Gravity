@@ -29,7 +29,7 @@ public class Inputcontrol : MonoBehaviour
         {
         if (character != null)
             {
-                character.onClickAttackChopButton();
+                //character.onClickAttackChopButton();
             }
             // Assuming you have a reference to the character script
         }
@@ -38,7 +38,7 @@ public class Inputcontrol : MonoBehaviour
     {
        if (character != null)
         {
-            character.onClickAttackSliceButton();
+            //character.onClickAttackSliceButton();
         }
         // Assuming you have a reference to the character script
     }
@@ -47,7 +47,7 @@ public class Inputcontrol : MonoBehaviour
     {
         if (character != null)
         {
-             character.onClickJumpButton();
+           //  character.onClickJumpButton();
         }
         // Assuming you have a reference to the character script
     }
